@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <WarningsAsErrors>Nullable</WarningsAsErrors>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <PublishAot>true</PublishAot>
+    <InvariantGlobalization>true</InvariantGlobalization>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- A demo app uses a ProjectReference rather than the published package so
+         development against the library is easy. Switch to a PackageReference
+         here to validate the consumer experience of the published .nupkg. -->
+    <ProjectReference Include="..\src\Telani.OpenDocumentCreator.csproj" />
+  </ItemGroup>
+
+</Project>

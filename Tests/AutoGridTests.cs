@@ -1,0 +1,204 @@
+﻿namespace OpenDocumentCreator.Tests;
+
+[TestClass]
+public sealed class AutoGridTests
+{
+    private readonly OpenDocumentSpreadsheet doc = new();
+
+    [TestMethod]
+    public async Task SetColumnsWidthTest()
+    {
+        var ag = SetupAutoGrid(20, 10);
+
+        ag.SetColumnsWidth(x: 1, "17mm", "22mm", "22mm");
+
+        var styles = doc.Styles.Where(a => a.Value.Family == DataTypes.StyleFamily.TableColumn).ToList();
+        Assert.HasCount(3, styles);
+
+        AssertRectangleGrid(ag);
+        await SaveDoc();
+    }
+
+    [TestMethod]
+    public async Task SetColumnsStylesFailTest()
+    {
+        var ag = SetupAutoGrid();
+        Assert.ThrowsExactly<InvalidOperationException>(() =>
+        {
+            ag.SetColumnsStyle(x: 1, "telaniTEST");
+        });
+
+        doc.Styles.Add("telaniTEST", new Styles.OpenDocumentStyle
+        {
+            Name = "telaniTEST"
+        });
+
+        ag.SetColumnsStyle(x: 1, "telaniTEST");
+
+        Assert.AreEqual("telaniTEST", ag.Columns[1].StyleName);
+
+        AssertRectangleGrid(ag);
+        await SaveDoc();
+    }
+
+    [TestMethod]
+    public async Task LongRowTest()
+    {
+        var ag = SetupAutoGrid();
+
+        ag.WriteCell(10, 2, "Testing");
+
+        Assert.AreEqual("Test-Table", doc.Tables.First().Name);
+
+        var row = doc.Tables.First().Rows[2];
+        Assert.AreEqual("Testing", row.ElementAt(10).Content);
+
+        AssertRectangleGrid(ag);
+        await SaveDoc();
+    }
+
+    private AutoGrid SetupAutoGrid(int x = 5, int y = 5)
+    {
+        var ag = new AutoGrid(doc, "Test-Table", x, y, "20mm");
+        doc.Tables.Add(ag);
+        return ag;
+    }
+
+    [TestMethod]
+    public async Task LongColumnsTest()
+    {
+        var ag = SetupAutoGrid();
+
+        ag.WriteCell(2, 10, "Testing");
+
+        Assert.AreEqual("Test-Table", doc.Tables.First().Name);
+
+        var row = doc.Tables.First().Rows[10];
+        Assert.AreEqual("Testing", row.ElementAt(2).Content);
+        AssertRectangleGrid(ag);
+
+        await SaveDoc();
+    }
+
+    [TestMethod]
+    public async Task SetColumnWithOutsideTest()
+    {
+        var ag = SetupAutoGrid();
+
+        ag.SetColumnsWidth(10, "50mm");
+
+        Assert.AreEqual("Test-Table", doc.Tables.First().Name);
+        AssertRectangleGrid(ag);
+        await SaveDoc();
+    }
+
+    private async Task SaveDoc()
+    {
+        MemoryStream mem = new();
+        await doc.Save(mem);
+    }
+
+    private static void AssertRectangleGrid(AutoGrid ag)
+    {
+        var rows = ag.Rows.Count;
+        var firstRow = ag.Rows[0].Count;
+
+        foreach (var r in ag.Rows)
+        {
+            Assert.HasCount(firstRow, r);
+        }
+    }
+
+    [TestMethod]
+    public async Task WriteRowOutsideTest()
+    {
+        var ag = SetupAutoGrid();
+
+        ag.WriteRows(10, 2, new Row(
+            [new OpenDocumentCell("1"), new OpenDocumentCell("2")]
+            ));
+
+        Assert.HasCount(5, ag.Rows);
+        Assert.HasCount(12, ag.Rows[0]);
+        AssertRectangleGrid(ag);
+
+        Assert.AreEqual("Test-Table", doc.Tables.First().Name);
+        
+
+        await SaveDoc();
+    }
+
+    [TestMethod]
+    public async Task WriteLongRowOutsideTest()
+    {
+        var ag = SetupAutoGrid();
+
+        ag.WriteRows(2, 2, new Row(
+            [   new OpenDocumentCell("1"), 
+                new OpenDocumentCell("2"),
+                new OpenDocumentCell("3"),
+                new OpenDocumentCell("4"),
+                new OpenDocumentCell("5"),
+                new OpenDocumentCell("6"),
+                new OpenDocumentCell("7"),
+            ]
+            ));
+
+        Assert.AreEqual("Test-Table", doc.Tables.First().Name);
+        AssertRectangleGrid(ag);
+
+        await SaveDoc();
+    }
+
+    [TestMethod]
+    public async Task WriteRowsTest()
+    {
+        var ag = SetupAutoGrid();
+
+        ag.WriteRows(2, 2,
+            new Row([new OpenDocumentCell("1")]),
+            new Row([new OpenDocumentCell("2")])
+            );
+
+        Assert.AreEqual("Test-Table", doc.Tables.First().Name);
+        AssertRectangleGrid(ag);
+
+        await SaveDoc();
+    }
+
+    [TestMethod]
+    public void WritingRowsPastInitialBoundsDoesNotInflateColumnCount()
+    {
+        // Reproduces a bug where writing rows past the initial row count
+        // caused the column count to grow by row.Count on every WriteRow call,
+        // eventually exceeding Excel's 16385-column limit for moderately sized
+        // exports. See OpenDocumentTable.AddColumn.
+        var ag = SetupAutoGrid(x: 5, y: 10);
+
+        for (int y = 5; y < 50; y++)
+        {
+            ag.WriteRow(0, y, new Row([
+                new OpenDocumentCell("a"),
+                new OpenDocumentCell("b"),
+                new OpenDocumentCell("c"),
+            ]));
+        }
+
+        Assert.HasCount(10, ag.Columns, "column count must not grow when rows that fit within existing columns are written past the initial row range");
+        AssertRectangleGrid(ag);
+    }
+
+    [TestMethod] 
+    public void EnsuringRowsTest() 
+    { 
+        var ag = SetupAutoGrid(x: 5, y: 5);
+        Assert.HasCount(5, ag.Rows);
+        ag.WriteRow(0, 10, []);
+        Assert.HasCount(11, ag.Rows);
+        ag.WriteRow(0, 10, []);
+        Assert.HasCount(11, ag.Rows, "row count must only grow to the required size once");
+        ag.WriteRow(0, 15, []);
+        Assert.HasCount(16, ag.Rows);
+        AssertRectangleGrid(ag); 
+    }
+}

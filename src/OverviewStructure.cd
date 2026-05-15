@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="OpenDocumentCreator.OpenDocumentCell">
+    <Position X="11.25" Y="1" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAgQAAACgAABAgBAgAAAIAAAIBAAAQAAAAAE=</HashCode>
+      <FileName>OpenDocumentCell.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Style" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="OpenDocumentCreator.OpenDocumentSpreadsheet">
+    <Position X="1.5" Y="8.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAAAAQAAAAAAAAAAAAAACAACAAAA=</HashCode>
+      <FileName>OpenDocumentSpreadsheet.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Tables" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="OpenDocumentCreator.OpenDocumentTable">
+    <Position X="7.25" Y="7.5" Width="3.25" />
+    <Members>
+      <Field Name="EXCEL_COLUMN_LIMIT" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAEIQAAAAgDAEAAAIABAAQAAAAAAAAgAAEBAAggAAA=</HashCode>
+      <FileName>OpenDocumentTable.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Rows" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="OpenDocumentCreator.Row">
+    <Position X="13.75" Y="6.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAABAAAAAABABIAIAAAAAAAAAAAAEBAAAAACAAAA=</HashCode>
+      <FileName>Row.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Style" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Cells" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OpenDocumentCreator.OpenDocumentStyle">
+    <Position X="4" Y="1.5" Width="4" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAgAAAgBAQAAAAQAAEAAAAAQAwAAAAAABAA=</HashCode>
+      <FileName>OpenDocumentStyle.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OpenDocumentCreator.OpenDocument">
+    <Position X="1.5" Y="6" Width="3" />
+    <Members>
+      <Method Name="AddBinaryEntry" Hidden="true" />
+      <Method Name="AddEntry" Hidden="true" />
+      <Method Name="AddImageResource" Hidden="true" />
+      <Method Name="AddXMLEntry" Hidden="true" />
+      <Method Name="CreateAutomaticStyles" Hidden="true" />
+      <Method Name="CreateContent" Hidden="true" />
+      <Method Name="CreateContentFile" Hidden="true" />
+      <Method Name="CreateDocument" Hidden="true" />
+      <Method Name="CreateFontFaceDecl" Hidden="true" />
+      <Method Name="CreateManifest" Hidden="true" />
+      <Method Name="CreateMasterStyles" Hidden="true" />
+      <Method Name="CreateStyleFile" Hidden="true" />
+      <Method Name="CreateStyles" Hidden="true" />
+      <Field Name="dc" Hidden="true" />
+      <Field Name="draw" Hidden="true" />
+      <Method Name="FindNamespace" Hidden="true" />
+      <Field Name="fo" Hidden="true" />
+      <Method Name="GetElementFor" Hidden="true" />
+      <Method Name="GetMimeType" Hidden="true" />
+      <Field Name="manifest" Hidden="true" />
+      <Field Name="Namespaces" Hidden="true" />
+      <Field Name="number" Hidden="true" />
+      <Field Name="of" Hidden="true" />
+      <Field Name="office" Hidden="true" />
+      <Field Name="Resources" Hidden="true" />
+      <Field Name="style" Hidden="true" />
+      <Field Name="svg" Hidden="true" />
+      <Field Name="table" Hidden="true" />
+      <Field Name="text" Hidden="true" />
+      <Property Name="TypeCache" Hidden="true" />
+      <Method Name="ValidationBeforeSave" Hidden="true" />
+      <Method Name="WriteZipFile" Hidden="true" />
+      <Field Name="xlink" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AgAAgINMIACIQABiAZIkBABAAACMgEAIBAICAAGIAgA=</HashCode>
+      <FileName>OpenDocument.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Styles" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
