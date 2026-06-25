@@ -28,6 +28,14 @@ public class OpenDocumentCell
     public string? Content { get; set; }
 
     /// <summary>
+    /// When <see langword="true"/>, empty lines within <see cref="Content"/> are kept as
+    /// empty paragraphs instead of being dropped. Defaults to <see langword="false"/>, which
+    /// preserves the historical behaviour of collapsing consecutive line breaks (and trimming
+    /// leading/trailing ones).
+    /// </summary>
+    public bool PreserveEmptyLines { get; set; }
+
+    /// <summary>
     /// The float content of this cell.
     /// </summary>
     public float? FloatContent { get; set; }
@@ -233,7 +241,8 @@ public class OpenDocumentCell
                 elem = OpenDocument.GetElementFor(cellNode);
                 if (Content.Contains('\n'))
                 {
-                    var lines = Content.Split(Separator, StringSplitOptions.RemoveEmptyEntries);
+                    var splitOptions = PreserveEmptyLines ? StringSplitOptions.None : StringSplitOptions.RemoveEmptyEntries;
+                    var lines = Content.Split(Separator, splitOptions);
                     foreach (var line in lines)
                     {
                         elem.Add(new XElement(Text + "p", EncodeTextContent(line)));
