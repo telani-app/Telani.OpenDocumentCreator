@@ -29,26 +29,45 @@ public sealed class OpenDocumentCellTest
     [TestMethod]
     public void EmptyLinesAreCollapsedByDefault()
     {
-        var cell = new OpenDocumentCell("First\n\n\nSecond");
+        var cell = new OpenDocumentCell("\nFirst\n\n\nSecond\n");
 
         var doc = LoadTestXML(cell.CreateElement(), out var nsmanager);
 
         var paragraphs = doc.SelectNodes("/table:table-cell/text:p", nsmanager);
         Assert.IsNotNull(paragraphs);
-        // The two blank lines between "First" and "Second" are dropped.
+        // All empty lines (leading, trailing and the two between) are dropped.
         Assert.HasCount(2, paragraphs.Cast<XmlNode>());
     }
 
     [TestMethod]
     public void EmptyLinesArePreservedWhenRequested()
     {
-        var cell = new OpenDocumentCell("First\n\n\nSecond") { PreserveEmptyLines = true };
+        var cell = new OpenDocumentCell("\nFirst\n\n\nSecond\n")
+        {
+            EmptyLines = EmptyLineHandling.Preserve,
+        };
 
         var doc = LoadTestXML(cell.CreateElement(), out var nsmanager);
 
         var paragraphs = doc.SelectNodes("/table:table-cell/text:p", nsmanager);
         Assert.IsNotNull(paragraphs);
-        // "First", two empty paragraphs, then "Second".
+        // Every line is kept: leading empty, "First", two empty, "Second", trailing empty.
+        Assert.HasCount(6, paragraphs.Cast<XmlNode>());
+    }
+
+    [TestMethod]
+    public void TrimEndsKeepsInnerEmptyLinesButDropsOuterOnes()
+    {
+        var cell = new OpenDocumentCell("\nFirst\n\n\nSecond\n")
+        {
+            EmptyLines = EmptyLineHandling.TrimEnds,
+        };
+
+        var doc = LoadTestXML(cell.CreateElement(), out var nsmanager);
+
+        var paragraphs = doc.SelectNodes("/table:table-cell/text:p", nsmanager);
+        Assert.IsNotNull(paragraphs);
+        // Leading/trailing empties trimmed; "First", two empties, "Second" remain.
         Assert.HasCount(4, paragraphs.Cast<XmlNode>());
     }
 
